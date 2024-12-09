@@ -1,0 +1,12 @@
+dist*/
+.vscode/
+node_modules/
+nano-vectordb/
+test/
+ttt/
+js/
+types/
+utils/
+.npmrc
+*.tgz
+test.json

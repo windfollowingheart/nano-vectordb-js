@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "ES2018", // 设置输出JavaScript的目标版本
+      "module": "commonjs", // 模块代码生成格式，对于Node.js来说通常是commonjs
+      "outDir": "./dist", // 输出目录
+      "rootDir": "./src", // 输入源代码的根目录
+      "declaration": true, // 生成对应的 .d.ts 文件
+      "sourceMap": true, // 生成 source map 文件，方便调试
+      "strict": true, // 启用所有严格类型检查选项
+      "esModuleInterop": true, // 允许从ES模块导入CommonJS模块
+      "skipLibCheck": true, // 跳过对库文件的类型检查
+      "forceConsistentCasingInFileNames": true, // 强制文件名大小写一致
+      "downlevelIteration": true,
+    },
+    "include": ["src/**/*"], // 包含哪些文件或目录
+    "exclude": ["node_modules"] // 排除哪些文件或目录
+  }

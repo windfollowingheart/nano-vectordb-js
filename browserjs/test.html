@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="dbs.min.js"></script>
+
+<body>
+    <script>
+        console.log(dbs)
+
+        // 设置数据长度和维度
+        const dataLen = 100;
+        const fakeDim = 1536;
+
+        // 生成随机矩阵 (dataLen x fakeDim)
+        function generateRandomMatrix(rows, cols) {
+            return Array.from({ length: rows }, () =>
+                new Float32Array(Array.from({ length: cols }, () => Math.random()))
+            );
+        }
+
+        // 生成随机矩阵
+        const fakeEmbeds = generateRandomMatrix(dataLen, fakeDim);
+
+        // 打印矩阵形状（仅用于调试）
+        console.log(`Shape: [${dataLen}, ${fakeDim}]`);
+
+        // 构建数据结构
+        const fakesData = Array.from({ length: dataLen }, (_, i) => ({
+            __vector__: fakeEmbeds[i],
+            __id__: i.toString()
+        }));
+
+        const vdb = new dbs.NanoVectorDB(fakeDim, "cosine", "test.json", 
+        (a)=>{
+            return {}
+        }, 
+        (a)=>{
+            return
+        }, 
+        true);
+
+        setTimeout(async() => {
+            // const vdb = new dbs.NanoVectorDB(fakeDim, "cosine", "test.json", undefined, undefined);
+            await vdb.postInit()
+            r = vdb.upsert(fakesData)
+            console.log(r["update"], r["insert"])
+            // query with embedding 
+            const queryData = Float32Array.from({ length: fakeDim }, () => Math.random())
+
+            // arguments:
+            const topK = 5
+            const betterThanThreshold = 0.01
+            const queryResult = vdb.query(queryData, topK, betterThanThreshold, (data) => parseInt(data.__id__) >= 70) // when  __id__ is a string of number
+            console.log(queryResult)
+            // vdb.save()
+            const ids = vdb.get([vdb.storage.data[0][dbs.F_ID]])
+            console.log(ids)
+            ids.forEach(id => {
+                console.log(id)
+                vdb.delete([id[dbs.F_ID]])
+            })
+            console.log(vdb.get(ids))
+            vdb.storeAdditionalData({a:1, b:2, c:3})
+            console.log(vdb.getAdditionalData())
+            vdb.save()
+            
+        }, 1000)
+    </script>
+</body>
+</html>

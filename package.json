@@ -1,0 +1,38 @@
+{
+  "name": "nano-vectordb-js",
+  "version": "1.0.7",
+  "description": "",
+  "main": "dist/node/dbs.js",
+  "module": "dist/browser/dbs.js",
+  "license": "AGPL-3.0-or-later",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "zotero-plugin serve",
+    "build-node": "tsc -p tsconfig.node.json",
+    "build-browser": "tsc -p tsconfig.browser.json",
+    "lint": "prettier --write . && eslint . --fix",
+    "release": "zotero-plugin release",
+    "test": "tsc -h",
+    "update-deps": "npm update --save",
+    "minify": "uglifyjs ./dist/browser/dbs.js -o ./dbs.min.js",
+    "build": "webpack"
+  },
+  "author": "",
+  "dependencies": {
+    "@types/uuid": "^10.0.0",
+    "buffer": "^6.0.3",
+    "crypto-js": "^4.2.0",
+    "nano-vectordb-js": "file:",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2",
+    "uglify-js": "^3.19.3",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4"
+  }
+}
