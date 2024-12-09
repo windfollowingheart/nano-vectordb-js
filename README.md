@@ -23,6 +23,15 @@
 npm install nano-vectordb-js
 ```
 
+**use in browser**:
+- download the file `dbs.min.js` from [here](https://github.com/windfollowingheart/nano-vectordb-js/blob/master/browserjs/dbs.min.js)
+- use it in your html file:
+```html
+<script src="dbs.min.js"></script>
+```
+the example is in the file [here](https://github.com/windfollowingheart/nano-vectordb-js/blob/master/browserjs/test.html)
+
+
 ## Quick Start
 
 **Faking your data**:
@@ -86,6 +95,16 @@ const vdb = new dbs.NanoVectorDB(fakeDim, "cosine", "test.json");
 // ES6
 // import { NanoVectorDB } from "nano-vectordb-js";
 // const vdb = new NanoVectorDB(fakeDim, "cosine", "test.json");
+```
+you can also use `postInit` to init the db sync in async function:
+
+```js
+(async() => {
+    const vdb = new dbs.NanoVectorDB(fakeDim, "cosine", "test.json", undefined, undefined, true);
+    await vdb.postInit()
+    r = vdb.upsert(fakesData)
+    console.log(r["update"], r["insert"])
+})()
 ```
 
 Next time you init `vdb` from `test.json`, `NanoVectorDB` will load the index automatically.
