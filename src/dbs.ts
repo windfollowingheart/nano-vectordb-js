@@ -127,10 +127,42 @@ class NanoVectorDB {
     writeJsonFunc?: (jsonObject: Record<string, any>, filePath: string) => Promise<void>;
     isSync: boolean; // 是否同步加载，主要是加载数据是异步的
 
-    constructor(embedding_dim: number, metric: Metric = 'cosine', storage_file: string = 'nano-vectordb.json', 
-        loadJsonFunc?: (filePath: string) => Promise<Record<string, any>>, 
-        writeJsonFunc?: (jsonObject: Record<string, any>, filePath: string) => Promise<void>,
-        isSync: boolean = false) {
+    // constructor({embedding_dim: number, metric: Metric = 'cosine', storage_file: string = 'nano-vectordb.json', 
+    //     loadJsonFunc?: (filePath: string) => Promise<Record<string, any>>, 
+    //     writeJsonFunc?: (jsonObject: Record<string, any>, filePath: string) => Promise<void>,
+    //     isSync: boolean = false}) {
+    //     this.embedding_dim = embedding_dim;
+    //     this.metric = metric;
+    //     this.storage_file = storage_file;
+    //     this.loadJsonFunc = loadJsonFunc;
+    //     this.writeJsonFunc = writeJsonFunc;
+    //     this.usable_metrics = {
+    //         "cosine": this.cosineQuery.bind(this),
+    //     };
+    //     this.storage = { embedding_dim: this.embedding_dim, data: [], matrix: [] }; // 初始化 storage
+    //     this.isLoaded = false
+
+    //     this.isSync = isSync;
+    //     if(!this.isSync) { // 如果不同步加载，则需要异步加载
+    //         this.postInit();
+    //     }
+        
+    // }
+    constructor({
+        embedding_dim,
+        metric = 'cosine',
+        storage_file = 'nano-vectordb.json',
+        loadJsonFunc,
+        writeJsonFunc,
+        isSync = false
+    }: {
+        embedding_dim: number;
+        metric?: Metric;
+        storage_file?: string;
+        loadJsonFunc?: (filePath: string) => Promise<Record<string, any>>;
+        writeJsonFunc?: (jsonObject: Record<string, any>, filePath: string) => Promise<void>;
+        isSync?: boolean;
+    }) {
         this.embedding_dim = embedding_dim;
         this.metric = metric;
         this.storage_file = storage_file;
@@ -140,13 +172,12 @@ class NanoVectorDB {
             "cosine": this.cosineQuery.bind(this),
         };
         this.storage = { embedding_dim: this.embedding_dim, data: [], matrix: [] }; // 初始化 storage
-        this.isLoaded = false
+        this.isLoaded = false;
 
         this.isSync = isSync;
-        if(!this.isSync) { // 如果不同步加载，则需要异步加载
+        if (!this.isSync) { // 如果不同步加载，则需要异步加载
             this.postInit();
         }
-        
     }
 
     public async postInit() {
@@ -393,7 +424,12 @@ class MultiTenantNanoVDB {
         }
 
         const tenantPath = new pathUtils().join(this.storage_dir, MultiTenantNanoVDB.jsonFileFromId(tenant_id));
-        const in_memory_tenant = new NanoVectorDB(this.embedding_dim, this.metric, tenantPath, this.loadJsonFunc, this.writeJsonFunc);
+        const in_memory_tenant = new NanoVectorDB({
+            embedding_dim: this.embedding_dim, 
+            metric: this.metric, 
+            storage_file: tenantPath, 
+            loadJsonFunc: this.loadJsonFunc, 
+            writeJsonFunc: this.writeJsonFunc});
         this.loadTenantInCache(tenant_id, in_memory_tenant);
         return in_memory_tenant;
     }
@@ -401,7 +437,12 @@ class MultiTenantNanoVDB {
     createTenant(tenantId?: string): string {
         const tenant_id = tenantId || uuidv4();
         const tenantPath = new pathUtils().join(this.storage_dir, MultiTenantNanoVDB.jsonFileFromId(tenant_id));
-        const in_memory_tenant = new NanoVectorDB(this.embedding_dim, this.metric, tenantPath, this.loadJsonFunc, this.writeJsonFunc);
+        const in_memory_tenant = new NanoVectorDB({
+            embedding_dim: this.embedding_dim, 
+            metric: this.metric, 
+            storage_file: tenantPath, 
+            loadJsonFunc: this.loadJsonFunc, 
+            writeJsonFunc: this.writeJsonFunc});
         this.loadTenantInCache(tenant_id, in_memory_tenant);
         return tenant_id;
     }

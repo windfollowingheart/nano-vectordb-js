@@ -83,24 +83,37 @@ console.log(fakesData.slice(0, 1));
 You can add any fields to a data. But there are two keywords:
 
 - `__id__`: If passed, `NanoVectorDB` will use your id, otherwise a generated id will be used.
-- `__vector__`: must pass, your embedding `Float32Array`.
+- `__vector__`: must pass, your embedding type is `Float32Array`.
 
 ### Init a DB
 
 ```js
 // Nodejs
 const dbs = require("nano-vectordb-js"); 
-const vdb = new dbs.NanoVectorDB(fakeDim, "cosine", "test.json");
+const vdb = new dbs.NanoVectorDB({
+        embedding_dim: fakeDim, 
+        metric: "cosine", 
+        storage_file: "test.json", 
+    });
 
 // ES6
 // import { NanoVectorDB } from "nano-vectordb-js";
-// const vdb = new NanoVectorDB(fakeDim, "cosine", "test.json");
+// const vdb = new dbs.NanoVectorDB({
+//         embedding_dim: fakeDim, 
+//         metric: "cosine", 
+//         storage_file: "test.json", 
+//     });
 ```
 you can also use `postInit` to init the db sync in async function:
 
 ```js
 (async() => {
-    const vdb = new dbs.NanoVectorDB(fakeDim, "cosine", "test.json", undefined, undefined, true);
+    const vdb = new dbs.NanoVectorDB({
+        embedding_dim: fakeDim, 
+        metric: "cosine", 
+        storage_file: "test.json", 
+        isSync: true
+    });
     await vdb.postInit()
     r = vdb.upsert(fakesData)
     console.log(r["update"], r["insert"])
@@ -155,16 +168,13 @@ vdb.save()
 ### Get, Delete
 
 ```js
-// get and delete the inserted data
-const { F_ID } = require("nano-vectordb-js"); // Nodejs
-// import { F_ID } from "nano-vectordb-js"; // ES6
 
 setTimeout(() => {
-    const ids = vdb.get([vdb.storage.data[0][F_ID]]);
+    const ids = vdb.get([vdb.storage.data[0][dbs.F_ID]]);
     console.log(ids);
     ids.forEach(id => {
         console.log(id);
-        vdb.delete([id[F_ID]]);
+        vdb.delete([id[dbs.F_ID]]);
     })
     console.log(vdb.get(ids));
 }, 1000);
