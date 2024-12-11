@@ -216,6 +216,10 @@ multiTenant.containTenant(tenantId);
 multiTenant.save();
 ```
 
+## Thanks
+
+- [NanoVectorDB](https://github.com/gusye1234/nano-vectordb)
+
 
 
 
